@@ -180,6 +180,32 @@ namespace ObjectControl {
 
 
 namespace OperatorControl {
+	namespace mystd {
+		using namespace std;
+		class ostream {
+		public:
+			ostream& operator<< (const char* str) {
+				printf("%s", str);
+				return *this;
+			}
+
+			ostream& operator<< (char str) {
+				printf("%c", str);
+				return *this;
+			}
+			ostream& operator << (ostream& (*fp)(ostream& ostm)) {
+				return fp(*this);
+			}
+		};
+		ostream& endl(ostream& ostm) {
+			ostm << '\n';
+			fflush(stdout);
+			return ostm;
+		}
+
+		ostream cout2;
+	}
+	
 	class Point {
 	private:
 		int xpos, ypos;
@@ -194,26 +220,82 @@ namespace OperatorControl {
 		}
 
 		friend Point operator+=(const Point pos1, const Point pos2);
+
+		Point& operator++(){ //++pos 
+							// 객체 자신을 참조할 수 있는 참조 값이 반환된다
+							// 만약에 Point 형이 선언된다면 객체 자신의 복사본을 만들어서 반환한다
+							// 하지만 Point 형으로 선언되면 연속해서 ++(++pos); 를 실행했을 때 값의 변화가 없게 된다
+			this->xpos += 1;
+			this->ypos += 1;
+			return *this;
+		}
+
+		const Point operator++(int) { //pos++
+			//참고로 C++ 에서는 (pos++)++ 과 (pos--)-- 를 허용하지 않음
+			const Point retobj(xpos, ypos); //retobj 객체를 상수화해서 retobj 객체에 저장된 값의 변경을 허용하지 않겠다 (retobj 는 반환을 위한 임시 객체)
+			xpos += 1;
+			ypos += 1;
+			return retobj; //증감하기 전의 객체를 먼저 return 함으로서 후위연산 가능하게
+		}
+
+		friend Point& operator--(Point& ref); //--pos
+		friend const Point operator--(Point& ref, int); //pos--
+
+
+		Point operator*(int times) { // ref * 3
+			Point pos(xpos * times, ypos * times);
+			return pos;
+		}
+		friend Point operator*(int times, Point& ref); // 3 * ref
 	};
+
+	//Point& ref 가 밖으로 나오게 된 이유는 밖으로 나왔기 때문에 그 외에는 모두 동일함
+	Point& operator--(Point& ref) { //--pos
+		ref.xpos -= 1;
+		ref.ypos -= 1;
+		return ref;
+	}
+
+	const Point operator--(Point& ref, int) { //pos--
+		const Point retobj(ref);
+		ref.xpos -= 1;
+		ref.ypos -= 1;
+		return retobj;
+	}
 
 	Point operator+=(const Point pos1, const Point pos2) {
 		Point pos(pos1.xpos - pos2.xpos, pos1.ypos - pos2.ypos);
 		return pos;
 	}
 
+	Point operator*(int times, Point& ref) {
+		return ref * times;
+	}
+
 	int main(void) {
 		Point pos1(3, 4);
 		Point pos2(10, 20);
 		Point pos3 = (pos1 += pos2);
+		Point pos4(3, 5);
+		Point pos5(3, 5);
 
 		pos1.ShowPosition();
 		pos2.ShowPosition();
 		pos3.ShowPosition();
+		cout << endl;
+
+		--(--pos4);
+		pos4.ShowPosition();
+		++(++pos4);
+		pos4.ShowPosition();
+
+		Point cpy = 3 * pos5 * 2;
+		cpy.ShowPosition();
 		return 0;
 	}
 }
 
-namespace referenceControl {
+namespace ReferenceControl {
 	class temp_class {
 	private:
 
@@ -236,7 +318,9 @@ namespace referenceControl {
 
 
 int main() {
-	referenceControl::temp_class ref;
-	ref.func();
+	using OperatorControl::mystd::cout2;
+	using OperatorControl::mystd::endl;
+
+	cout2 << "asd" << endl << 'a' << endl;
 	return 0;
-}
+};
