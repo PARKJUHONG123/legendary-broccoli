@@ -107,11 +107,11 @@ namespace ObjectControl {
 
 	class EmployeeHandler {
 	private:
-		Employee* empList[50];
+		Employee* empList[50] = { NULL };
 		int empNum;
 
 	public:
-		EmployeeHandler() : empNum(0) {
+		EmployeeHandler() : empNum(0), empList() {
 			cout << "constructor : EmployeeHandler" << endl;
 		}
 

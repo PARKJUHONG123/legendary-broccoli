@@ -21,7 +21,7 @@ public:
 
 	}
 	void ExceptionReason() {
-		cout << "Error : " << index << " <= " << bound << endl << "Reason : " << "Out of Boundary" << endl;
+		cout << "Error Reason : " << "Out of Boundary" << endl << "Index = " << index << endl << "Bound = " << bound << endl;
 	}
 };
 
@@ -38,7 +38,7 @@ public:
 	}
 	~arrayStack() {
 		delete []arr;
-		cout << "delete arrayStack" << endl;
+		cout << "배열 스택이 삭제됨" << endl;
 	}
 
 	void push(T value) {		
@@ -75,7 +75,6 @@ public:
 		cout << endl;
 	}
 };
-
 
 template <typename T>
 class linkedStack {
@@ -136,6 +135,7 @@ public:
 			delete top;
 			top = temp;
 		}
+		cout << "링크드 스택이 삭제됨" << endl;
 	}
 };
 
