@@ -46,9 +46,10 @@ public:
 		}
 	}
 
-	void remove(T value) {
+	T remove(T value) {
 		node<T>* ptr = head;
 		node<T>* temp = ptr;
+		T result = NULL;
 
 		while (ptr != nullptr) {
 			if (ptr->value == value) {
@@ -64,13 +65,13 @@ public:
 			if (ptr == head) {
 				if (head->next != nullptr) {
 					head = head->next;
-					cout << "삭제되는 값 : " << ptr->value << endl;
+					result = ptr->value;
 					delete ptr;
 				}
 				else {
 					head = nullptr;
 					tail = nullptr;
-					cout << "삭제되는 값 : " << ptr->value << endl;
+					result = ptr->value;
 					delete ptr;
 				}
 			}
@@ -80,10 +81,11 @@ public:
 				}
 				temp->next = ptr->next;
 				ptr->next = nullptr;
-				cout << "삭제되는 값 : " << ptr->value << endl;
+				result = ptr->value;
 				delete ptr;
 			}
 		}
+		return result;
 	}
 
 	void deleteList() {
@@ -119,7 +121,7 @@ public:
 
 	}
 	~circleLinked() {
-
+		deleteList();
 	}
 
 	void add(T value) {
@@ -138,10 +140,11 @@ public:
 		size++;
 	}
 
-	void remove(T value) {
+	T remove(T value) {
 		node<T>* ptr = head;
 		node<T>* temp = ptr;
 		int count = 0;
+		T result = NULL;
 
 		while (count < size) {
 			if (ptr->value == value) {
@@ -158,14 +161,14 @@ public:
 			if (ptr == head) {
 				if (head->next != nullptr) {
 					head = head->next;
-					tail->next = head;
-					cout << "삭제되는 값 : " << ptr->value << endl;
+					tail->next = head;				
+					result = ptr->value;
 					delete ptr;
 				}
 				else {
 					head = nullptr;
 					tail = nullptr;
-					cout << "삭제되는 값 : " << ptr->value << endl;
+					result = ptr->value;
 					delete ptr;
 				}
 			}
@@ -175,11 +178,12 @@ public:
 				}
 				temp->next = ptr->next;
 				ptr->next = nullptr;
-				cout << "삭제되는 값 : " << ptr->value << endl;
+				result = ptr->value;
 				delete ptr;
 			}
 			size--;
 		}
+		return result;
 	}
 
 	void deleteList() {
@@ -240,9 +244,10 @@ public:
 		size++;
 	}
 
-	void remove(T value) {
+	T remove(T value) {
 		node_d<T>* ptr = head;
 		node_d<T>* temp = ptr;
+		T result = NULL;
 
 		while (ptr != nullptr) {
 			if (ptr->value == value) {
@@ -259,13 +264,13 @@ public:
 				if (head->next != nullptr) {
 					head = head->next;
 					head->prev = nullptr;
-					cout << "삭제되는 값 : " << ptr->value << endl;
+					result = ptr->value;
 					delete ptr;
 				}
 				else {
 					head = nullptr;
 					tail = nullptr;
-					cout << "삭제되는 값 : " << ptr->value << endl;
+					result = ptr->value;
 					delete ptr;
 				}
 			}
@@ -278,11 +283,12 @@ public:
 					temp->next = ptr->next;
 					(ptr->next)->prev = temp;
 				}
-				cout << "삭제되는 값 : " << ptr->value << endl;
+				result = ptr->value;
 				delete ptr;
 			}
 			size--;
 		}
+		return result;
 	}
 
 	void deleteList() {
@@ -331,13 +337,47 @@ public:
 };
 
 int main() {
+	//singleLinked<int> list = singleLinked<int>();
+	//circleLinked<int> list = circleLinked<int>();
 	doubleLinked<int> list = doubleLinked<int>();
-	for (int i = 10; i > 0; i--) {
-		list.add(i);
+
+	int choice = -1, input = -1;
+	bool check_out = false;
+
+	while (1) {
+		cout << "1.삽입 2.삭제 3.출력 4.종료 5.검색 (double 한정)" << endl;
+		cin >> choice;
+
+		switch (choice) {
+		case 1:
+			cin >> input;
+			list.add(input);
+			break;
+
+		case 2:
+			cout << "삭제할 값을 입력하시오" << endl;
+			cin >> input;
+			cout << list.remove(input) << endl;
+			break;
+
+		case 3:
+			list.show();
+			break;
+
+
+		case 4:
+			check_out = true;
+			break;
+
+		/*
+		case 5:
+			cout << "검색할 인덱스를 입력하시오" << endl;
+			cin >> input;
+			list.get(input);
+			break;
+		*/
+		}
+		if (check_out) break;
 	}
-	list.show();
-	list.get(0);
-	list.get(9);
-	list.deleteList();
 	return 0;
 }

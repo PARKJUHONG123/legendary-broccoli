@@ -63,7 +63,8 @@ public:
 	}
 
 	// 데이터 제거
-	void pop() {
+	T remove() {
+		T result = arr[used];
 		if (used == 0) {
 			throw OutBoundaryException();
 		}
@@ -79,9 +80,10 @@ public:
 			arr[i] = temp[i];
 		}
 		delete[]temp;
+		return result;
 	}
 
-	void print() {
+	void show() {
 		for (int i = 0; i < used; i++) {
 			cout << arr[i] << ' ';
 		}
@@ -89,11 +91,12 @@ public:
 	}
 
 	// 인덱스의 데이터 제거
-	void pop_index(int index) {
+	T remove_index(int index) {
+		T result;
 		if (index >= used) {
 			throw OutBoundaryException(index, used);
 		}
-
+		result = arr[index];
 		T* temp = new T[used - 1];
 		for (int i = 0; i < index; i++) {
 			temp[i] = arr[i];
@@ -108,6 +111,7 @@ public:
 			arr[i] = temp[i];
 		}
 		delete[]temp;
+		return result;
 	}
 
 	// 해당 인덱스의 데이터 반환
@@ -126,29 +130,48 @@ public:
 };
 
 int main() {
+	ArrayList<int> arrayList;
 	int size;
+	int choice = -1, input = -1;
+	bool check_out = false;
+
 	cout << "크기를 입력하세요" << endl;
 	cin >> size;
+	arrayList = ArrayList<int>(size);
 
 	try {
-		ArrayList<char> input_arrays(size);
-		input_arrays.add('a');
-		input_arrays.add('b');
-		input_arrays.add('c');
-		cout << input_arrays[2] << endl;
-		input_arrays.add('d');
-		input_arrays.print();
-		input_arrays.pop_index(3);
+		while (1) {
+			cout << "1.삽입 2.삭제 3.출력 4.종료" << endl;
+			cin >> choice;
 
-		input_arrays.print();
-		input_arrays.pop();
-		input_arrays.print();
-		input_arrays.pop();
-		input_arrays.print();
-		input_arrays.pop();
-		input_arrays.print();
-		input_arrays.pop();
-		input_arrays.print();
+			switch (choice) {
+			case 1:
+				cin >> input;
+				arrayList.add(input);
+				break;
+
+			case 2:
+				cout << "특정 인덱스를 입력하세요 (없으면 -1)" << endl;
+				cin >> input;
+				if (input == -1) {
+					cout << arrayList.remove() << endl;
+				}
+				else {
+					cout << arrayList.remove_index(input) << endl;
+				}
+				break;
+
+			case 3:
+				arrayList.show();
+				break;
+
+			case 4:
+				check_out = true;
+				break;
+			}
+			cout << endl;
+			if (check_out) break;
+		}
 	}
 	catch (OutBoundaryException obpn) {
 		obpn.ExceptionReason();

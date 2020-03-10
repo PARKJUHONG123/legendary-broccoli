@@ -68,7 +68,7 @@ public:
 		return arr[element_number];
 	}
 
-	void print() {
+	void show() {
 		for (int i = 0; i < element_number; i++) {
 			cout << arr[i] << " ";
 		}
@@ -118,7 +118,7 @@ public:
 		}
 	}
 	
-	void print() {
+	void show() {
 		node<T>* temp = top;
 		while (temp != nullptr) {
 			cout << temp->value << " ";
@@ -130,7 +130,6 @@ public:
 	void deleteStack() {
 		node<T>* temp = top;
 		while (temp != nullptr) {
-			print();
 			temp = temp->next;
 			delete top;
 			top = temp;
@@ -140,28 +139,38 @@ public:
 };
 
 int main() {
-	/*
+	// arrayStack<int> stack = arrayStack<int>();
 	linkedStack<int> stack = linkedStack<int>();
-	for (int i = 0; i < 10; i++) {
-		stack.push(i);
-		stack.print();
-	}
-	stack.print();
-	cout << "pop : " << stack.pop() << endl;
-	*/
+	int choice = -1, input = -1;
+	bool check_out = false;
 
 	try {
-		arrayStack<int> stack = arrayStack<int>();
-		for (int i = 0; i < 10; i++) {
-			stack.push(i);
-			stack.print();
-		}
-		for (int i = 0; i < 11; i++) {
-			cout << "pop : " << stack.pop() << endl;
-			stack.print();
+		while (1) {
+			cout << "1.삽입 2.삭제 3.출력 4.종료" << endl;
+			cin >> choice;
+
+			switch (choice) {
+			case 1:
+				cin >> input;
+				stack.push(input);
+				break;
+
+			case 2:
+				cout << stack.pop() << endl;
+				break;
+
+			case 3:
+				stack.show();
+				break;
+
+			case 4:
+				check_out = true;
+				break;
+			}
+			if (check_out) break;
 		}
 	}
-	catch (OutBoundaryException obpn){
+	catch (OutBoundaryException obpn) {
 		obpn.ExceptionReason();
 	}
 	return 0;
