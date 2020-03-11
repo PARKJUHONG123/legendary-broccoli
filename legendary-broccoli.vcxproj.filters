@@ -33,5 +33,14 @@
     <ClCompile Include="5_queue_deque.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="6_map.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="7_set.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="8_tree.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
