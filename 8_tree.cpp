@@ -6,90 +6,6 @@
 
 using namespace std;
 
-namespace queue_space {
-	template <typename T>
-	struct node {
-		node<T>* prev = nullptr;
-		node<T>* next;
-		T value;
-	};
-
-	class nullptrError {
-	public:
-		void ExceptionError() {
-			cout << "dequeue nullptr error" << endl;
-		}
-	};
-
-	template <typename T>
-	class queue {
-	private:
-		node<T>* head = nullptr;
-		node<T>* tail = nullptr;
-
-	public:
-		queue() : head(nullptr), tail(nullptr) {
-
-		}
-		~queue() {
-			deleteQueue();
-		}
-
-		node<T>* returnHead() {
-			return head;
-		}
-
-		void enqueue(T value) {
-			node<T>* temp = new node<T>;
-			temp->next = nullptr;
-			temp->prev = nullptr;
-			temp->value = value;
-
-			if (head == nullptr) {
-				head = temp;
-				tail = temp;
-			}
-			else {
-				tail->next = temp;
-				tail = temp;
-			}
-		}
-
-		T dequeue() {
-			if (head == nullptr) {
-				throw nullptrError();
-			}
-			else {
-				node<T>* temp = head;
-				T result = temp->value;
-				head = head->next;
-				delete temp;
-				return result;
-			}
-		}
-
-		void show() {
-			node<T>* temp = head;
-			while (temp != nullptr) {
-				cout << temp->value << " ";
-				temp = temp->next;
-			}
-			cout << endl;
-		}
-
-		void deleteQueue() {
-			node<T>* temp;
-			while (head != nullptr) {
-				temp = head;
-				head = head->next;
-				delete temp;
-			}
-			cout << "큐가 삭제됨" << endl;
-		}
-	};
-}
-
-
 template <typename T>
 struct node {
 	T value;
@@ -99,15 +15,23 @@ struct node {
 };
 
 template <typename T>
-class binary_tree{
+class binary_tree {
 private:
 	node<T>* root;
 public:
-	binary_tree() : root(nullptr){
+	binary_tree() : root(nullptr) {
 
 	}
 	~binary_tree() {
+		if (root != nullptr) deleteTree(root);
+		cout << "트리 삭제" << endl;
+	}
 
+	void deleteTree(node<T>* root) {
+		if (root->left != nullptr) deleteTree(root->left);
+		if (root->right != nullptr) deleteTree(root->right);
+		delete []root;
+		return;
 	}
 
 	node<T>* getRoot() {
@@ -144,7 +68,7 @@ public:
 					}
 				}
 				else {
-					cout << "중복된 값 발견 : " << index->value << " = "<< temp->value << endl;
+					cout << "중복된 값 발견 : " << index->value << " = " << temp->value << endl;
 					delete[]temp;
 					break;
 				}
@@ -152,28 +76,80 @@ public:
 		}
 	}
 
-	T remove(T value, node<T>* parent, node<T>* index) {
-		if (index == root) {
-
+	node<T>* search(node<T>* root) {
+		if (root == nullptr) {
+			return nullptr;
+		}
+		if (root->left == nullptr) { //자기 자신이 왼쪽 끝이라면
+			return root;
 		}
 		else {
-			if (parent->left == index) {
-
-			}
-			else {
-
-			}
+			return search(root->left); //더 왼쪽 끝이 있다면
 		}
+	}
 
-		if (index->left != nullptr) {
-			remove(value, index, index->left);
-		}
-
-		if (index->right != nullptr) {
-			remove(value, index, index->right);
+	node<T>* remove(node<T>* root, node<T>* parent, T target) {
+		node<T>* curr = nullptr;
+		if (root == nullptr) {
+			return nullptr;
 		}
 		
+		if (root->value > target) { // 타겟보다 값이 크거나
+			curr = remove(root->left, root, target);
+		}
+		else if (root->value < target) { // 타켓보다 값이 작거나
+			curr = remove(root->right, root, target);
+		}
+		else { // 타겟일 경우
+			curr = root;
+
+			// 자식 노드 없음
+			if (root->left == nullptr && root->right == nullptr) {
+				// 똑 때버림
+				if (parent->left == root) {
+					parent->left = nullptr;
+				}
+				else {
+					parent->right = nullptr;
+				}
+				delete[]root;
+				cout << "no child node delete" << endl;
+			}
+
+			// 자식 노드 두개
+			else if (root->left != nullptr && root->right != nullptr) {
+				// 오른쪽 중에서 가장 왼쪽에 있는 값을 선택한다
+				node<T>* min_node = search(root->right);
+				min_node = remove(root, nullptr, min_node->value);
+				root->value = min_node->value;
+				delete[]min_node;
+				cout << "two child node delete" << endl;
+			}
+
+			// 자식 노드 한개
+			else {
+				node<T>* temp = (root->left != nullptr) ? root->left : root->right;
+				if (parent == nullptr) {
+					root->left = temp->left;
+					root->right = temp->right;
+					root->value = temp->value;
+					delete[]temp;
+				}
+				else {
+					if (parent->left == root) {
+						parent->left = temp;
+					}
+					else {
+						parent->right = temp;
+					}
+					delete[]root;
+				}
+				cout << "one child node delete" << endl;
+			}
+		}
+		return curr;
 	}
+
 
 	void preorder(node<T>* index) {
 		cout << index->value << " ";
@@ -233,33 +209,63 @@ public:
 };
 
 int main() {
-	binary_tree<char> tree = binary_tree<char>();
-	node<char>* root;
+	binary_tree<int> tree = binary_tree<int>();
+	node<int>* root;
+	int choice = -1, input = -1;
+	bool check_out = false;
 
-	tree.add('F');
-	tree.add('B');
-	tree.add('A');
-	tree.add('D');
-	tree.add('C');
-	tree.add('E');
-	tree.add('G');
-	tree.add('I');
-	tree.add('H');
-	
-	root = tree.getRoot();
-	if (root == nullptr) {
-		cout << "error";
-	}
-	else {
-		tree.preorder(root);
-		cout << endl;
-		tree.inorder(root);
-		cout << endl;
-		tree.postorder(root);
-		cout << endl;
-		tree.levelorder(root);
-		cout << endl;
-	}
+	while (1) {
+		//1 6 1 2 1 8 1 1 1 4 1 3 1 5 1 7 1 10 1 9
+		cout << "1.삽입 2.삭제 3.출력 4.종료" << endl;
+		cin >> choice;
 
+		switch (choice) {
+		case 1:
+			cin >> input;
+			tree.add(input);
+			break;
+
+		case 2:
+			cin >> input;
+			root = tree.getRoot();
+			if (root == nullptr) {
+				cout << "empty";
+			}
+			else {
+				tree.remove(root, nullptr, input);
+			}
+			break;
+
+		case 3:
+			root = tree.getRoot();
+			if (root == nullptr) {
+				cout << "empty";
+			}
+			else {
+				cout << "preorder : ";
+				tree.preorder(root);
+				cout << endl;
+
+				cout << "inorder : ";
+				tree.inorder(root);
+				cout << endl;
+				
+				cout << "postorder : ";
+				tree.postorder(root);
+				cout << endl;
+				
+				cout << "levelorder : ";
+				tree.levelorder(root);
+				cout << endl;
+			}
+			break;
+
+		case 4:
+			check_out = true;
+			break;
+		}
+		cout << endl;
+		if (check_out) break;
+	}
 	return 0;
 }
