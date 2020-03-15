@@ -1,8 +1,10 @@
 #include <iostream>
 #include <cstdio>
 
-using namespace std;
+#define MIN_INT -99999
+#define MAX_INT +99999
 
+using namespace std;
 class OutBoundaryException {
 private:
 	int index, bound;
@@ -58,6 +60,7 @@ private:
 		else { // ÀÚ½Ä ¿ÞÂÊ 1¸í
 			son_index = 2 * index;
 		}
+
 		if (son_index != -1 && node_array[son_index] > node_array[index]) {
 			temp_value = node_array[son_index];
 			node_array[son_index] = node_array[index];
@@ -89,6 +92,35 @@ public:
 		if (node_index <= 1) {
 			throw OutBoundaryException(node_index, 1);
 		}
+		node_array[1] = node_array[node_index - 1];
+		remove_sort(1);
+		node_index--;
+		return result;
+	}
+
+	T remove(T value) {
+		if (node_index <= 1) {
+			throw OutBoundaryException(node_index, 1);
+		}
+
+		int index = 1;
+		T temp, result;
+		for (index = 1; index < node_index; index++) {
+			if (node_array[index] == value) {
+				break;
+			}
+		}
+		result = node_array[index];
+		node_array[index] = MAX_INT;
+
+		for (int i = index; i > 1; i /= 2) {
+			if (node_array[i] > node_array[i / 2]) {
+				temp = node_array[i];
+				node_array[i] = node_array[i / 2];
+				node_array[i / 2] = temp;
+			}
+		}
+
 		node_array[1] = node_array[node_index - 1];
 		remove_sort(1);
 		node_index--;
@@ -181,6 +213,35 @@ public:
 		return result;
 	}
 
+	T remove(T value) {
+		if (node_index <= 1) {
+			throw OutBoundaryException(node_index, 1);
+		}
+
+		int index = 1;
+		T temp, result;
+		for (index = 1; index < node_index; index++) {
+			if (node_array[index] == value) {
+				break;
+			}
+		}
+		result = node_array[index];
+		node_array[index] = MIN_INT;
+		
+		for (int i = index; i > 1; i /= 2) {
+			if (node_array[i] < node_array[i / 2]) {
+				temp = node_array[i];
+				node_array[i] = node_array[i / 2];
+				node_array[i / 2] = temp;
+			}
+		}
+
+		node_array[1] = node_array[node_index - 1];
+		remove_sort(1);
+		node_index--;
+		return result;
+	}
+
 	void show() {
 		for (int i = 1; i < node_index; i++) {
 			cout << node_array[i] << ' ';
@@ -244,7 +305,8 @@ int main() {
 					break;
 
 				case 2:
-					cout << test.remove() << endl;
+					cin >> input;
+					cout << test.remove(input) << endl;
 					break;
 
 				case 3:
